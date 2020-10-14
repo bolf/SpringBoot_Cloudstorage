@@ -8,10 +8,10 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface UserMapper {
-    @Select("Select * From USERS Where username=#{username}")
+    @Select("SELECT * FROM USERS WHERE username=#{username}")
     User getUser(String username);
 
-    @Insert("Insert Into USERS (username,salt,password,firstname,lastname) VALUES(#{username}, #{salt}, #{password}, #{firstname}, #{lastname})")
+    @Insert("INSERT INTO USERS (username,salt,password,firstname,lastname) VALUES(#{username}, #{salt}, #{password}, #{firstname}, #{lastname})")
     @Options(useGeneratedKeys = true, keyProperty = "userId")
     int insert(User user);
 }
