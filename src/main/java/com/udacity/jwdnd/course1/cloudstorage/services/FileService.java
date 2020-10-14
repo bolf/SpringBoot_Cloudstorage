@@ -24,4 +24,12 @@ public class FileService {
     public List<File> getLoggedInUserFiles(Integer userId){
         return fileMapper.getUsersFiles(userId);
     }
+
+    public File getFileById(Integer fileId) {
+        return fileMapper.getFileById(fileId);
+    }
+
+    public void deleteFileById(Integer fileId) {
+        fileMapper.deleteFileById(fileId);
+    }
 }
