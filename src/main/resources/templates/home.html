@@ -24,8 +24,8 @@
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form th:action="@{/home}" action="#" enctype="multipart/form-data" method="POST">
+                    <div class="tab-pane fade" id="nav-files" th:classappend="${activeTab} == '#nav-files' ? 'active show'" role="tabpanel" aria-labelledby="nav-files-tab">
+                        <form th:action="@{/files/upload}" action="#" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -49,10 +49,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="uploaded_file : ${uploadedFiles}">
+                                <tr th:each="uploaded_file : ${files}">
                                     <td>
-                                        <a th:href="@{'/home/getFile/'+${uploaded_file.getFileId()}}" class="btn btn-success">View</a>
-                                        <a th:href="@{'/home/deleteFile/'+${uploaded_file.getFileId()}}" class="btn btn-danger">Delete</a>
+                                        <a th:href="@{'/files/get/'+${uploaded_file.getFileId()}}" class="btn btn-success">View</a>
+                                        <a th:href="@{'/files/delete/'+${uploaded_file.getFileId()}}" class="btn btn-danger">Delete</a>
                                     </td>
                                     <th th:text="${uploaded_file.getFileName()}" scope="row">ExampleFile.txt</th>
                                 </tr>
@@ -75,13 +75,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="note:${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button
+                                                    th:data-id="|${note.getNoteId()}|"
+                                                    th:data-title="|${note.getNoteTitle()}|"
+                                                    th:data-description="|${note.getNoteDescription()}|"
+                                                    th:onclick="showNoteModal(this.getAttribute('data-id'),this.getAttribute('data-title'),this.getAttribute('data-description'))"  type="button" class="btn btn-success">Edit</button>
+                                            <a th:href="@{'/notes/delete/'+${note.getNoteId()}}" class="btn btn-danger">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th th:text="${note.getNoteTitle()}" scope="row">Example Note Title</th>
+                                        <td th:text="${note.getNoteDescription()}">Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -97,7 +101,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form th:action="@{/notes/write}" action="#" method="POST">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -208,6 +212,15 @@
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
             }
+        </script>
+
+        <!--for activating current tab-->
+        <input type="hidden" id="activeTab" th:value="${activeTab}"/>
+        <script type="text/javascript">
+            //$('#nav-tab a[href="#nav-notes"]').tab('show');
+            var val = '#nav-tab a[href=\"' + $("#activeTab").val() + '\"]';
+            //alert(val);
+            $(val).tab('show');
         </script>
     </body>
 </html>
