@@ -21,8 +21,8 @@ import java.io.IOException;
 
 @Controller
 public class FilesController {
-    private FileService fileService;
-    private UserService userService;
+    private final FileService fileService;
+    private final UserService userService;
 
     public FilesController(FileService fileService, UserService userService) {
         this.fileService = fileService;

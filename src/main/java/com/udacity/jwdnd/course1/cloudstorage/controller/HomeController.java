@@ -10,9 +10,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class HomeController {
-    UserService userService;
-    FileService fileService;
-    NoteService noteService;
+    private final UserService userService;
+    private final FileService fileService;
+    private final NoteService noteService;
 
     public HomeController(FileService fileService, UserService userService, NoteService noteService) {
         this.fileService = fileService;

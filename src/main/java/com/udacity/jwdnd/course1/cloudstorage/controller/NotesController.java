@@ -13,8 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class NotesController {
-    private NoteService noteService;
-    private UserService userService;
+    private final NoteService noteService;
+    private final UserService userService;
 
     public NotesController(NoteService noteService, UserService userService) {
         this.noteService = noteService;

@@ -9,11 +9,9 @@ import java.util.List;
 @Service
 public class FileService {
     private final FileMapper fileMapper;
-    private final UserService userService;
 
     public FileService(FileMapper fileMapper, UserService userService) {
         this.fileMapper = fileMapper;
-        this.userService = userService;
     }
 
     public int createFile(File file){
