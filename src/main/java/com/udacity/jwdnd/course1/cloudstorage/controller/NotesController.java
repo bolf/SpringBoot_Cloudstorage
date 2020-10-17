@@ -22,11 +22,16 @@ public class NotesController {
     }
 
     @PostMapping("/notes/write")
-    public String handleNoteCreation(@ModelAttribute("noteForm") NoteForm noteForm, RedirectAttributes redirectAttrs) {
+    public String handleNoteWrite(@ModelAttribute("noteForm") NoteForm noteForm, RedirectAttributes redirectAttrs) {
+        Note note = new Note(noteForm.getNoteId(),
+                noteForm.getNoteTitle(),
+                noteForm.getNoteDescription(),
+                userService.getCurrentLoggedInUser().getUserId());
+
         if (noteForm.getNoteId() == null)
-            noteService.createNote(new Note(null, noteForm.getNoteTitle(), noteForm.getNoteDescription(), userService.getCurrentLoggedInUser().getUserId()));
+            noteService.createNote(note);
         else
-            noteService.updateNote(new Note(noteForm.getNoteId(), noteForm.getNoteTitle(), noteForm.getNoteDescription(), userService.getCurrentLoggedInUser().getUserId()));
+            noteService.updateNote(note);
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-notes");
         return "redirect:/home";
@@ -34,7 +39,7 @@ public class NotesController {
 
     @GetMapping ("/notes/delete/{noteId}")
     public String deleteNote(@PathVariable Integer noteId, RedirectAttributes redirectAttrs){
-        noteService.deleteNoteById(noteId);
+        noteService.deleteNoteById(noteId,userService.getCurrentLoggedInUser().getUserId());
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-notes");
         return "redirect:/home";

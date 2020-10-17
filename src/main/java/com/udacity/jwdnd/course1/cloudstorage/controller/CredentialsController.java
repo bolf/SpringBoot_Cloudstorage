@@ -6,7 +6,9 @@ import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import com.udacity.jwdnd.course1.cloudstorage.services.security.EncryptionService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -16,12 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class CredentialController {
+public class CredentialsController {
     private final CredentialService credentialService;
     private final UserService userService;
     private final EncryptionService encryptionService;
 
-    public CredentialController(CredentialService credentialService, UserService userService, EncryptionService encryptionService) {
+    public CredentialsController(CredentialService credentialService, UserService userService, EncryptionService encryptionService) {
         this.credentialService = credentialService;
         this.userService = userService;
         this.encryptionService = encryptionService;
@@ -39,18 +41,27 @@ public class CredentialController {
     }
 
     @PostMapping("/credentials/write")
-    public String handleCredentialCreation(@ModelAttribute("credentialForm") CredentialForm credentialForm, RedirectAttributes redirectAttrs){
-        if(credentialForm.getCredentialId() == null) {
-            Map<String,String> passMap = encrypt(credentialForm.getPassword());
-            credentialService.createCredential(new Credential(null,
-                    credentialForm.getUrl(),
-                    credentialForm.getUsername(),
-                    passMap.get("key"),
-                    passMap.get("pass"),
-                    userService.getCurrentLoggedInUser().getUserId()));
-        }
-//        else
-//            credentialService.createCredential(new Credential());
+    public String handleCredentialWrite(@ModelAttribute("credentialForm") CredentialForm credentialForm, RedirectAttributes redirectAttrs) {
+        Map<String, String> passMap = encrypt(credentialForm.getPassword());
+        Credential credential = new Credential(credentialForm.getCredentialId(),
+                credentialForm.getUrl(),
+                credentialForm.getUsername(),
+                passMap.get("key"),
+                passMap.get("pass"),
+                userService.getCurrentLoggedInUser().getUserId());
+
+        if (credentialForm.getCredentialId() == null) {
+            credentialService.createCredential(credential);
+        } else
+            credentialService.updateCredential(credential);
+
+        redirectAttrs.addFlashAttribute("activeTab", "#nav-credentials");
+        return "redirect:/home";
+    }
+
+    @GetMapping("/credentials/delete/{credentialId}")
+    public String deleteCredential(@PathVariable Integer credentialId, RedirectAttributes redirectAttrs){
+        credentialService.deleteCredentialById(credentialId,userService.getCurrentLoggedInUser().getUserId());
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-credentials");
         return "redirect:/home";

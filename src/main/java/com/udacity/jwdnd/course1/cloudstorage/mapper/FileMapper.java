@@ -14,10 +14,13 @@ public interface FileMapper {
     @Select("SELECT fileid,filename,contenttype,filesize,userid, null AS filedata FROM FILES WHERE userid=#{userId} ORDER BY fileid DESC")
     List<File> getUsersFiles(Integer userId);
 
-    @Select("SELECT * FROM FILES WHERE fileid=#{fileId}")
-    File getFileById(Integer fileId);
+    @Select("SELECT * FROM FILES WHERE fileid=#{fileId} AND userid=#{userId}")
+    File getFileById(Integer fileId, Integer userId);
 
-    @Delete("DELETE FROM FILES WHERE fileid=#{fileId}")
-    void deleteFileById(Integer fileId);
+    @Delete("DELETE FROM FILES WHERE fileid=#{fileId} AND userid=#{userId}")
+    void deleteFileById(Integer fileId, Integer userId);
+
+    @Select("SELECT * FROM FILES WHERE filename=#{fileName} AND userid=#{userId}")
+    File getFileByName(String fileName, Integer userId);
 }
 

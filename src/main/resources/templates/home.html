@@ -3,9 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
         <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
-
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/toastr.min.css}">
         <title>Home</title>
     </head>
     <body class="p-3 mb-2 bg-light text-black">
@@ -81,7 +80,8 @@
                                                     th:data-id="|${note.getNoteId()}|"
                                                     th:data-title="|${note.getNoteTitle()}|"
                                                     th:data-description="|${note.getNoteDescription()}|"
-                                                    th:onclick="showNoteModal(this.getAttribute('data-id'),this.getAttribute('data-title'),this.getAttribute('data-description'))"  type="button" class="btn btn-success">Edit</button>
+                                                    th:onclick="showNoteModal(this.getAttribute('data-id'),this.getAttribute('data-title'),this.getAttribute('data-description'))"
+                                                    type="button" class="btn btn-success">Edit</button>
                                             <a th:href="@{'/notes/delete/'+${note.getNoteId()}}" class="btn btn-danger">Delete</a>
                                         </td>
                                         <th th:text="${note.getNoteTitle()}" scope="row">Example Note Title</th>
@@ -138,14 +138,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="credential:${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button th:data-id="|${credential.credentialId}|"
+                                                th:data-url="|${credential.url}|"
+                                                th:data-username="|${credential.username}|"
+                                                th:data-password="|${credential.password}|"
+                                                th:onclick="showCredentialModal(this.getAttribute('data-id'),this.getAttribute('data-url'),this.getAttribute('data-username'),this.getAttribute('data-password'))"
+                                                type="button" class="btn btn-success">Edit</button>
+                                        <a th:href="@{'/credentials/delete/'+${credential.credentialId}}" class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th  th:text="${credential.url}" scope="row">Example Credential URL</th>
+                                    <td th:text="${credential.username}">Example Credential Username</td>
+                                    <td th:text="${credential.password}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -189,10 +194,9 @@
                 </div>
             </div>
         </div>
-
-        <script th:src="@{/js/jquery-slim.min.js}"></script>
-        <script th:src="@{/js/popper.min.js}"></script>
+        <script th:src="@{/js/jquery.min.js}"></script>
         <script th:src="@{/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/toastr.min.js}"></script>
 
         <!--For opening the note modal-->
         <script type="text/javascript">
@@ -221,6 +225,15 @@
             var val = '#nav-tab a[href=\"' + $("#activeTab").val() + '\"]';
             //alert(val);
             $(val).tab('show');
+        </script>
+
+        <!--toasts for user informing-->
+        <input type="hidden" id="toastMsg" th:value="${toastMsg}"  value="file is not uploaded!"/>
+        <script type="text/javascript">
+            var val = $('#toastMsg').val();
+            if(val){
+                toastr.error(val);
+            }
         </script>
     </body>
 </html>

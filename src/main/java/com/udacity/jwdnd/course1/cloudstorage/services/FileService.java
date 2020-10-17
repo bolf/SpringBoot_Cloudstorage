@@ -22,11 +22,17 @@ public class FileService {
         return fileMapper.getUsersFiles(userId);
     }
 
-    public File getFileById(Integer fileId) {
-        return fileMapper.getFileById(fileId);
+    public File getFileById(Integer fileId, Integer userId) {
+        return fileMapper.getFileById(fileId, userId);
     }
 
-    public void deleteFileById(Integer fileId) {
-        fileMapper.deleteFileById(fileId);
+    public void deleteFileById(Integer fileId, Integer userId) {
+        fileMapper.deleteFileById(fileId, userId);
     }
+
+    public boolean fileExists(String filename, Integer userId){
+        File file = fileMapper.getFileByName(filename, userId);
+        return file != null;
+    }
+
 }

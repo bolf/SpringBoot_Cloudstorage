@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -13,11 +14,13 @@ public class HomeController {
     private final UserService userService;
     private final FileService fileService;
     private final NoteService noteService;
+    private final CredentialService credentialService;
 
-    public HomeController(FileService fileService, UserService userService, NoteService noteService) {
+    public HomeController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.userService = userService;
         this.noteService = noteService;
+        this.credentialService = credentialService;
     }
 
     @GetMapping("/home")
@@ -25,6 +28,7 @@ public class HomeController {
         Integer currUserId = userService.getCurrentLoggedInUser().getUserId();
         model.addAttribute("files", fileService.getLoggedInUserFiles(currUserId));
         model.addAttribute("notes", noteService.getLoggedInUserNotes(currUserId));
+        model.addAttribute("credentials", credentialService.getLoggedInUserCredentials(currUserId));
         if(model.asMap().get("activeTab") == null)
             model.addAttribute("activeTab","#nav-files");
         return "home";

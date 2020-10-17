@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Controller
 public class FilesController {
@@ -31,16 +31,22 @@ public class FilesController {
 
     @PostMapping("/files/upload")
     public String handleFileUpload(@RequestParam("fileUpload") MultipartFile file, RedirectAttributes redirectAttrs) throws IOException {
-        User currentUser = userService.getCurrentLoggedInUser();
-        fileService.createFile(new File(null,file.getOriginalFilename(),file.getContentType(),file.getSize(),currentUser.getUserId(),file.getBytes()));
-
         redirectAttrs.addFlashAttribute("activeTab", "#nav-files");
+
+        User currentUser = userService.getCurrentLoggedInUser();
+        if(fileService.fileExists(file.getOriginalFilename(),currentUser.getUserId())){
+            redirectAttrs.addFlashAttribute("toastMsg", "File \"".concat(Objects.requireNonNull(file.getOriginalFilename())).concat("\" has already been uploaded earlier. \n"));
+            return "redirect:/home";
+        }
+
+        fileService.createFile(new File(null,file.getOriginalFilename(),file.getContentType(),file.getSize(),currentUser.getUserId(),file.getBytes()));
         return "redirect:/home";
     }
 
     @GetMapping("/files/get/{fileId}")
     public ResponseEntity<ByteArrayResource> getFile(@PathVariable Integer fileId){
-        File file = fileService.getFileById(fileId);
+        User currentUser = userService.getCurrentLoggedInUser();
+        File file = fileService.getFileById(fileId,currentUser.getUserId());
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION,"attachment:filename=\""+file.getFileName()+"\"")
@@ -49,7 +55,7 @@ public class FilesController {
 
     @GetMapping("/files/delete/{fileId}")
     public String deleteFile(@PathVariable Integer fileId, RedirectAttributes redirectAttrs){
-        fileService.deleteFileById(fileId);
+        fileService.deleteFileById(fileId,userService.getCurrentLoggedInUser().getUserId());
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-files");
         return "redirect:/home";
