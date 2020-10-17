@@ -30,8 +30,13 @@ public class FilesController {
     }
 
     @PostMapping("/files/upload")
-    public String handleFileUpload(@RequestParam("fileUpload") MultipartFile file, RedirectAttributes redirectAttrs) throws IOException {
+    public String handleFileUpload(@RequestParam("fileUpload") MultipartFile file, RedirectAttributes redirectAttrs){
         redirectAttrs.addFlashAttribute("activeTab", "#nav-files");
+
+        if(file.getOriginalFilename().isEmpty()){
+            redirectAttrs.addFlashAttribute("toastMsg", "Select a file to upload");
+            return "redirect:/home";
+        }
 
         User currentUser = userService.getCurrentLoggedInUser();
         if(fileService.fileExists(file.getOriginalFilename(),currentUser.getUserId())){
@@ -39,7 +44,11 @@ public class FilesController {
             return "redirect:/home";
         }
 
-        fileService.createFile(new File(null,file.getOriginalFilename(),file.getContentType(),file.getSize(),currentUser.getUserId(),file.getBytes()));
+        try {
+            fileService.createFile(new File(null, file.getOriginalFilename(), file.getContentType(), file.getSize(), currentUser.getUserId(), file.getBytes()));
+        }catch (IOException e){
+            redirectAttrs.addFlashAttribute("toastMsg", "Could not upload file =(");
+        }
         return "redirect:/home";
     }
 
