@@ -34,6 +34,8 @@ public class NotesController {
             noteService.updateNote(note);
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-notes");
+        redirectAttrs.addFlashAttribute("toastMsg", "Note written successfully");
+        redirectAttrs.addFlashAttribute("toastType", "success");
         return "redirect:/home";
     }
 
@@ -42,6 +44,8 @@ public class NotesController {
         noteService.deleteNoteById(noteId,userService.getCurrentLoggedInUser().getUserId());
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-notes");
+        redirectAttrs.addFlashAttribute("toastMsg", "Note deleted");
+        redirectAttrs.addFlashAttribute("toastType", "warning");
         return "redirect:/home";
     }
 

@@ -34,6 +34,6 @@ public class SignupPage {
         inputUsername.sendKeys(uName);
         submit_button.click();
 
-        return driver.findElement(By.id("success-msg")).isDisplayed();
+        return driver.findElement(By.id("toastType")).getAttribute("value").equals("success");
     }
 }

@@ -56,6 +56,8 @@ public class CredentialsController {
             credentialService.updateCredential(credential);
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-credentials");
+        redirectAttrs.addFlashAttribute("toastMsg", "Credential written successfully");
+        redirectAttrs.addFlashAttribute("toastType", "success");
         return "redirect:/home";
     }
 
@@ -64,6 +66,8 @@ public class CredentialsController {
         credentialService.deleteCredentialById(credentialId,userService.getCurrentLoggedInUser().getUserId());
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-credentials");
+        redirectAttrs.addFlashAttribute("toastMsg", "Credential deleted");
+        redirectAttrs.addFlashAttribute("toastType", "warning");
         return "redirect:/home";
     }
 }

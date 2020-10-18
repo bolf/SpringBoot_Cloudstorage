@@ -35,12 +35,14 @@ public class FilesController {
 
         if(file.getOriginalFilename().isEmpty()){
             redirectAttrs.addFlashAttribute("toastMsg", "Select a file to upload");
+            redirectAttrs.addFlashAttribute("toastType", "error");
             return "redirect:/home";
         }
 
         User currentUser = userService.getCurrentLoggedInUser();
         if(fileService.fileExists(file.getOriginalFilename(),currentUser.getUserId())){
             redirectAttrs.addFlashAttribute("toastMsg", "File \"".concat(Objects.requireNonNull(file.getOriginalFilename())).concat("\" has already been uploaded earlier. \n"));
+            redirectAttrs.addFlashAttribute("toastType", "error");
             return "redirect:/home";
         }
 
@@ -48,7 +50,11 @@ public class FilesController {
             fileService.createFile(new File(null, file.getOriginalFilename(), file.getContentType(), file.getSize(), currentUser.getUserId(), file.getBytes()));
         }catch (IOException e){
             redirectAttrs.addFlashAttribute("toastMsg", "Could not upload file =(");
+            redirectAttrs.addFlashAttribute("toastType", "error");
         }
+
+        redirectAttrs.addFlashAttribute("toastMsg", "File uploaded successfully");
+        redirectAttrs.addFlashAttribute("toastType", "success");
         return "redirect:/home";
     }
 
@@ -67,6 +73,8 @@ public class FilesController {
         fileService.deleteFileById(fileId,userService.getCurrentLoggedInUser().getUserId());
 
         redirectAttrs.addFlashAttribute("activeTab", "#nav-files");
+        redirectAttrs.addFlashAttribute("toastMsg", "File deleted");
+        redirectAttrs.addFlashAttribute("toastType", "warning");
         return "redirect:/home";
     }
 }

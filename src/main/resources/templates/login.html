@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/toastr.min.css}">
 
         <title>Login</title>
     </head>
@@ -33,5 +34,26 @@
                 <label><a id="signup-link" th:href="@{/signup}">Click here to sign up</a></label>
             </div>
         </div>
+
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/js/toastr.min.js}"></script>
+        <!--toasts for user informing-->
+        <input type="hidden" id="toastMsg" th:value="${toastMsg}"/>
+        <input type="hidden" id="toastType" th:value="${toastType}"/>
+        <script type="text/javascript">
+            var toastMsg = $('#toastMsg').val();
+            var toastType = $('#toastType').val();
+            switch(toastType) {
+                case 'error':
+                    toastr.error(toastMsg);
+                    break;
+                case 'success':
+                    toastr.success(toastMsg);
+                    break;
+                case 'warning':
+                    toastr.warning(toastMsg);
+                    break;
+            }
+        </script>
     </body>
 </html>

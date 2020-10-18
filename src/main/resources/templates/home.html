@@ -229,11 +229,21 @@
         </script>
 
         <!--toasts for user informing-->
-        <input type="hidden" id="toastMsg" th:value="${toastMsg}"  value="file is not uploaded!"/>
+        <input type="hidden" id="toastMsg" th:value="${toastMsg}"/>
+        <input type="hidden" id="toastType" th:value="${toastType}"/>
         <script type="text/javascript">
-            var val = $('#toastMsg').val();
-            if(val){
-                toastr.error(val);
+            var toastMsg = $('#toastMsg').val();
+            var toastType = $('#toastType').val();
+            switch(toastType) {
+                case 'error':
+                    toastr.error(toastMsg);
+                    break;
+                case 'success':
+                    toastr.success(toastMsg);
+                    break;
+                case 'warning':
+                    toastr.warning(toastMsg);
+                    break;
             }
         </script>
     </body>
