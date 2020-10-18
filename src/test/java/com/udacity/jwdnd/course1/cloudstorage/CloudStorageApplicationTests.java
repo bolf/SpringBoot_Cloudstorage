@@ -15,6 +15,8 @@ class CloudStorageApplicationTests {
 	@LocalServerPort
 	private int port;
 
+	private final String serverAddress = "http://localhost:";
+
 	private static WebDriver driver;
 	private SignupPage signupPage;
 	private LoginPage loginPage;
@@ -35,26 +37,25 @@ class CloudStorageApplicationTests {
 
 	@AfterAll
 	public static void afterAll() {
-//		if (driver != null) {
-//			driver.quit();
-//		}
+		if (driver != null) {
+			driver.quit();
+		}
 	}
-
 
 	//test that verifies that an unauthorized user can only access the login and signup pages
 	@Test
 	@Order(1)
 	public void unauthorizedAccess() {
-		driver.get("http://localhost:" + this.port + "/login");
+		driver.get(serverAddress + port + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
 
-		driver.get("http://localhost:" + this.port + "/signup");
+		driver.get(serverAddress + port + "/signup");
 		Assertions.assertEquals("Sign Up", driver.getTitle());
 
-		driver.get("http://localhost:" + this.port + "/home");
+		driver.get(serverAddress + port + "/home");
 		Assertions.assertNotEquals("Home", driver.getTitle());
 
-		driver.get("http://localhost:" + this.port + "/files/get/1");
+		driver.get(serverAddress + port + "/files/get/1");
 		Assertions.assertNotEquals("Home", driver.getTitle());
 	}
 
@@ -66,19 +67,24 @@ class CloudStorageApplicationTests {
 	@Test
 	@Order(2)
 	public void signupLoginLogout(){
+		String firstname = "usr";
+		String lastname = "usr";
+		String username = "usr";
+		String password = "123";
+
 		//signup
-		driver.get("http://localhost:" + port + "/signup");
-		assertTrue(signupPage.signup("usr", "usr", "usr", "123", driver));
+		driver.get(serverAddress + port + "/signup");
+		assertTrue(signupPage.signup(firstname, lastname, username, password, driver));
 		//login
-		driver.get("http://localhost:" + port + "/login");
-		assertTrue(loginPage.login("usr", "123", driver));
+		driver.get(serverAddress + port + "/login");
+		assertTrue(loginPage.login(username, password, driver));
 		//go to "/home"
-		driver.get("http://localhost:" + this.port + "/home");
+		driver.get(serverAddress + port + "/home");
 		Assertions.assertEquals("Home", driver.getTitle());
 		//logout
 		assertTrue(homePage.logout(driver));
 		//home page is no longer accessible
-		driver.get("http://localhost:" + this.port + "/home");
+		driver.get(serverAddress + port + "/home");
 		Assertions.assertNotEquals("Home", driver.getTitle());
 	}
 
@@ -87,13 +93,51 @@ class CloudStorageApplicationTests {
 	@Order(3)
 	public void createNote() {
 		//login
-		driver.get("http://localhost:" + port + "/login");
+		driver.get(serverAddress + port + "/login");
 		assertTrue(loginPage.login("usr", "123", driver));
 		//go to "/home"
-		driver.get("http://localhost:" + this.port + "/home");
+		driver.get(serverAddress + port + "/home");
 		Assertions.assertEquals("Home", driver.getTitle());
 		//post a note
-		homePage.postNote(driver);
+		assertTrue(homePage.postNote(driver));
+	}
+
+	//test that edits an existing note and verifies that the changes are displayed
+	@Test
+	@Order(4)
+	public void editNote(){
+		assertTrue(homePage.editNote(driver));
+	}
+
+	//test that deletes a note and verifies that the note is no longer displayed
+	@Test
+	@Order(5)
+	public void deleteNote(){
+		assertTrue(homePage.deleteNote(driver));
+	}
+
+	//test that creates a set of credentials,
+	// verifies that they are displayed,
+	// and verifies that the displayed password is encrypted.
+	@Test
+	@Order(6)
+	public void createCredential(){
+		assertTrue(homePage.createCredential(driver));
+	}
+
+	//test that views an existing set of credentials,
+	// verifies that the viewable password is unencrypted,
+	// edits the credentials, and verifies that the changes are displayed
+	@Test
+	@Order(7)
+	public void editCredential(){
+		assertTrue(homePage.editCredential(driver));
+	}
+
+	//test that deletes an existing set of credentials and verifies that the credentials are no longer displayed
+	@Test
+	@Order(8)
+	public void deleteCredential(){
+		assertTrue(homePage.deleteCredential(driver));
 	}
 }
-

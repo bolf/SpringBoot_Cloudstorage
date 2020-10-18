@@ -34,7 +34,6 @@ public class SignupPage {
         inputUsername.sendKeys(uName);
         submit_button.click();
 
-        WebElement marker = driver.findElement(By.id("success-msg"));
-        return marker != null;
+        return driver.findElement(By.id("success-msg")).isDisplayed();
     }
 }

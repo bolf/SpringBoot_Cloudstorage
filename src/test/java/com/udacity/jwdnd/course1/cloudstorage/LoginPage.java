@@ -21,7 +21,7 @@ public class LoginPage {
         PageFactory.initElements(driver,this);
     }
 
-    public boolean login(String username, String password, WebDriver driver) throws NoSuchElementException {
+    public boolean login(String username, String password, WebDriver driver) {
         inputPassword.sendKeys(password);
         inputUsername.sendKeys(username);
         submit_button.click();
